@@ -1,0 +1,11 @@
+Trial and event: 
+    Cointains a specific number of events where each event may have a particular outcome. Coin flips
+
+Binomial dist generator
+rbinom(n=20, size=6, prob=0.5) n= trials size= events prob= chance of each event
+
+ set.seed() to set randomness from that point on 
+
+accumalitive prob in R
+    cumsum(table) the categories accumalate as they go on eventually hitting 1.00 for the last event all the probabilities add up to 1
+
