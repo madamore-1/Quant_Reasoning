@@ -1,0 +1,192 @@
+---
+title: "IST772 Problem Set 3 Fall 2024"
+author: "Your name here"
+output:
+  pdf_document: default
+variant: gfm+footnotes
+---
+
+The homework for week 3 is based is based on exercises 2 through 7 on pages 50 and 51, but with changes as noted in the text in this notebook (i.e., follow the problems as given in this document and not the textbook). 
+
+Attribution statement: (choose only one)
+1. I did this homework by myself, with help from the book and the professor
+2. I did this homework with help from the book and the professor and these Internet sources:
+3. I did this homework with help from <Name of another student> but did not cut and paste any code
+
+Be sure also to cite sources and AI usage as detailed in PS 1. 
+
+Set the random number seed so that your results will match mine.
+
+```{r}
+set.seed(772)
+```
+
+# Chapter 3, Exercise 2 
+
+_For the remaining exercises in this set, we will use the daily temperature measurements for Syracuse, available on Blackboard. Use the summary(syr) command to reveal basic information about the weather data set. You will find that the dataset contains six different variables. Name the variables (1 pt). Use the dim() command to show the dimensions of the data set. The second number in the output, 6, is the number of columns in the data set, in other words the number of variables. What is the first number (1 pt)? Report it and describe briefly what you think it signifies._
+
+```{r}
+syr <- read.csv(file.choose())
+summary(syr)
+#Station , Name,  Date, TAVG, Tmax, Tmin
+dim(syr)
+#365 rows 6 columns that is the size of the data set
+
+
+```
+
+# Chapter 3, Exercise 3
+
+_When a data set contains more than one variable, R offers a subsetting operator, \$, to access each variable individually. (NB. the backslash is needed in the notebook file because a dollar sign by itself means to shift to math mode. In R code, you would just use the dollar sign, without the back slash.) For the exercises below, we are interested only in the contents of one of the variables in the data set, called TAVG. We can access the TAVG. variable by itself, using the \$, with this expression: syr$TAVG. Run the following commands, and for each line report what the command does and the output, and briefly explain each piece of output  (1 pt for summary, head, and mean; 1 pt for new variable, and 0.50 quantile):_
+
+```{r}
+summary(syr$TAVG)
+#Summary of the Tavg column
+head(syr$TAVG)
+# shows the first 10 entries of the TAVG column
+mean(syr$TAVG)
+#mean of the tavg column
+myTAVG <- syr$TAVG
+#saves the average to the myTAVG variable
+quantile(myTAVG,.50)
+#function that makes quantiles of a data set.
+#0.50 specifies the desired quantile, which corresponds to the median in this case
+#it returns the median value of the myTAVG data.
+```
+
+# Chapter 3, Exercise 4 
+
+_In the second to last command of the previous exercise, you created a copy of the TAVG data from the trees data set and put it in a new vector called myTAVG You can continue to use this myTAVG variable for the rest of the exercises below. Create a histogram for that variable. Then write code that will display on the histogram the 2.5% and 97.5% quantiles of the distribution for that variable (1 pt for histogram and quantiles). Write an interpretation of the variable, including descriptions of the mean, median (1 pt for mean and median), shape of the distribution (1 pt), and the 2.5% and 97.5% quantiles. Make sure to clearly describe what the 2.5% and 97.5% quantiles signify (1 pt)._
+
+```{r}
+
+hist(myTAVG, main = "Histogram of myTAVG", xlab = "myTAVG", col = "lightblue", border = "black", breaks = 30)
+
+# Calculate the 2.5% and 97.5% quantiles
+quantile <- quantile(myTAVG, probs = c(0.025, 0.975))
+
+# Add vertical lines for the 2.5% and 97.5% quantiles
+abline(v = quantiles[1], col = "red", lwd = 2, lty = 2)  # 2.5% quantile
+abline(v = quantiles[2], col = "blue", lwd = 2, lty = 2)  # 97.5% quantile
+
+
+
+#Mean: The average of the data points in myTAVG.
+#Median: The middle value when data points are ordered from lowest to highest.
+
+#Shape of the Distribution: 
+#The distribution appears to be roughly uniform, with data fairly spread across the range of values. 
+#There isn’t a clear skewness in either direction, which suggests the data is fairly evenly distributed.
+
+#2.5% and 97.5% Quantiles: 
+#The red dashed line marks the 2.5% quantile (lower bound), while the blue dashed line marks the 97.5% quantile #(upper bound). 
+#These quantiles indicate that 95% of the data lies between these two values, excluding outliers in the lower and upper extremes.
+
+
+```
+
+# Chapter 3, Exercise 5 
+
+_Write R code that will construct a sampling distribution of means from the TAVG data (as noted above, if you did exercise 3 you can use myTAVG instead of syr\$TAVG). Make sure that the sampling distribution contains at least 2,000 means. Store the sampling distribution in a new variable that you can keep using. Use a sample size of n = 11 (sampling with replacement) (2 pts). Show a histogram of this distribution of sample means. Then, write and run R commands that will display the 2.5% and 97.5% quantiles of the sampling distribution on the histogram with a vertical line (1 pt)._
+
+```{r}
+
+n <- 11  # Sample size
+n_means <- 2000  # Number of sample means
+
+# Create a sampling distribution of means
+set.seed(772)  
+sampling_distribution <- replicate(n_means, mean(sample(myTAVG, n, replace = TRUE)))
+
+# Store the sampling distribution 
+sampling_dist_means <- sampling_distribution
+
+# histogram of the sampling distribution of means
+hist(sampling_dist_means, main = "Sampling Distribution of Means", xlab = "Sample Means", 
+     col = "lightblue", border = "black", breaks = 30)
+
+# repeat ex 4 copy paste
+lower_quantile <- quantile(sampling_dist_means, 0.025)
+upper_quantile <- quantile(sampling_dist_means, 0.975)
+
+abline(v = lower_quantile, col = "red", lwd = 2)
+abline(v = upper_quantile, col = "red", lwd = 2)
+abline(v = mean(myTAVG), col = "orange", lwd = 2)
+abline(v = mean(sampling_dist_means), col = "green", lwd = 2)
+# Quantiles
+print(paste("Lower Quantile:", lower_quantile))
+print(paste("Upper Quantile:", upper_quantile))
+print(paste("Mean of myTAVG:", mean(myTAVG)))
+print(paste("Mean of Sample Means:", mean(sampling_dist_means)))
+
+#legend I took this code and modified it from my week 3 lab from my data visualization class
+
+legend("topright", legend = c("2.5% Quantile", "97.5% Quantile", "Mean of myTAVG", "Mean of Sample Means"),
+       col = c("red", "red", "orange", "green"), lwd = 2)
+
+``` 
+
+# Chapter 3, Exercise 6 
+
+_If you did Exercise 4, you calculated some quantiles for a distribution of raw data. If you did Exercise 5, you calculated some quantiles for a sampling distribution of means. Briefly describe, from a conceptual perspective and in your own words, what the difference is between a distribution of raw data and a distribution of sampling means (2 pts). Finally, remark on why the 2.5% and 97.5% quantiles are so different between the raw data distribution and the sampling distribution of means (2 pts)._
+
+```{r}
+#Raw Data Distribution: Shows the variability of individual data points, which can include extreme values and outliers. 
+#It typically has more spread and a wider range.
+
+#Sampling Distribution of Means: Shows the means of multiple samples, which are more stable and less affected by outliers. 
+#This distribution is more concentrated around the population mean and has less spread.
+
+#Quantiles Difference: The 2.5% and 97.5% quantiles are farther apart in the raw data due to greater variability, 
+#while they are closer together in the sampling distribution because averaging reduces the impact of extreme values.
+
+
+```
+
+# Chapter 3, Exercise 7 
+
+_Redo Exercise 5, but this time use a sample size of n = 100 instead of the original sample size of n = 11 used in Exercise 5. (1 pt) Explain why the 2.5% and 97.5% quantiles are different from the results you got for Exercise 5 (1 pt). As a hint, be sure to specify what feature or characteristic of a sample makes it a “better” sample. (1 pt)_  
+
+```{r}
+
+n <- 100  # Sample size
+n_means <- 2000  # Number of sample means
+
+# Create a sampling distribution of means
+set.seed(772)  
+sampling_distribution <- replicate(n_means, mean(sample(myTAVG, n, replace = TRUE)))
+
+# Store the sampling distribution 
+sampling_dist_means <- sampling_distribution
+
+# histogram of the sampling distribution of means
+hist(sampling_dist_means, main = "Sampling Distribution of Means", xlab = "Sample Means", 
+     col = "lightblue", border = "black", breaks = 30)
+
+# repeat ex 4 copy paste
+lower_quantile <- quantile(sampling_dist_means, 0.025)
+upper_quantile <- quantile(sampling_dist_means, 0.975)
+
+abline(v = lower_quantile, col = "red", lwd = 2)
+abline(v = upper_quantile, col = "red", lwd = 2)
+abline(v = mean(myTAVG), col = "orange", lwd = 4)
+abline(v = mean(sampling_dist_means), col = "green", lwd = 2)
+# Quantiles
+print(paste("Lower Quantile:", lower_quantile))
+print(paste("Upper Quantile:", upper_quantile))
+print(paste("Mean of myTAVG:", mean(myTAVG)))
+print(paste("Mean of Sample Means:", mean(sampling_dist_means)))
+
+#legend I took this code and modified it from my week 3 lab from my data visualization class
+
+legend("topright", legend = c("2.5% Quantile", "97.5% Quantile", "Mean of myTAVG", "Mean of Sample Means"),
+       col = c("red", "red", "orange", "green"), lwd = 2)
+
+#Reduced Variability: The sample means are more tightly clustered around the population mean, showing less spread.
+#Narrower Confidence Intervals: The 2.5% and 97.5% quantiles are closer together, improving the precision of the estimate.
+#More Normal Distribution: The sampling distribution becomes more symmetric and bell-shaped, following the Central Limit Theorem.
+#Improved Accuracy: Larger samples provide a more accurate and reliable estimate of the population mean.
+
+
+```
+
